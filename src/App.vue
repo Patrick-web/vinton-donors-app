@@ -1,32 +1,86 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <div class="full" @click="goFullScreen"></div>
+    <v-main class="pos-rel">
+      <v-btn
+        @click="goBack"
+        id="pos_route"
+        fab
+        dark
+        small
+        color="transparent"
+        depressed
+      >
+        <v-icon dark> mdi-arrow-left </v-icon>
+      </v-btn>
+      <transition
+        enter-active-class="animated fadeInUp fast"
+        leave-active-class="animated fadeOutDown fast"
+      >
+        <router-view />
+      </transition>
+    </v-main>
+  </v-app>
 </template>
 
+<script>
+export default {
+  name: "App",
+
+  data: () => ({
+    //
+  }),
+  methods: {
+    goBack() {
+      console.log(this.$router.back());
+    },
+    goFullScreen() {
+      document
+        .querySelector(".v-application--wrap")
+        .removeChild(document.querySelector(".full"));
+      document.body
+        .requestFullscreen()
+        .then((e) => {
+          console.log(e);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  mounted() {},
+};
+</script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+@import "./assets/styles/utilityClasses.css";
+@import "./assets/styles/animate.css";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-#nav {
-  padding: 30px;
+body {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: black;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+#pos_route {
+  position: fixed;
+  z-index: 10;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.full {
+  position: fixed;
+  z-index: 4;
+  width: 100vw;
+  height: 100vh;
+}
+.page {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
 }
 </style>
