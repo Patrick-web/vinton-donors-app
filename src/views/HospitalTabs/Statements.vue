@@ -16,11 +16,11 @@
         "
       >
         <h4 class="mb10">{{ blood.bloodType }}</h4>
-        <div class="flex_between w-80">
+        <div class="flex_between w-100 border_split">
           <p>Available</p>
           <p>{{ blood.balance }}</p>
         </div>
-        <div class="flex_between w-80">
+        <div class="flex_between w-100">
           <p>Minimum</p>
           <p>{{ blood.minimum }}</p>
         </div>
@@ -164,12 +164,18 @@ export default {
 }
 .blood_card {
   color: white;
-  margin: 10px;
+  margin: 0px 5px;
   background: rgb(16, 16, 16);
   overflow: hidden;
   position: relative;
   z-index: 20;
   cursor: pointer;
+  div {
+    padding: 5px 10px;
+  }
+  p {
+    margin: 0px;
+  }
   &:hover {
     background: rgb(27, 27, 27);
   }
