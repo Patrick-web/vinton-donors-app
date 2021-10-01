@@ -612,3 +612,7 @@
 .width_full{
   width: 100%;
 }
+
+.no_pointer{
+  pointer-events: none;
+}

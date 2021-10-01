@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import { updateHospitalDetails } from "@/global/supa.js";
 export default {
   data() {
@@ -46,6 +46,7 @@ export default {
     ...mapGetters(["hospitalAccountDetails"]),
   },
   methods: {
+    ...mapMutations(["setHospitalDetails"]),
     async submit() {
       const updatedDetails = {};
       if (this.newUsername) {
@@ -59,10 +60,23 @@ export default {
       }
       const update = await updateHospitalDetails(
         updatedDetails,
-        this.hospitalAccountDetails.username
+        this.hospitalAccountDetails.email
       );
-      this.setHospitalDetails(update);
+      if (update) {
+        this.setHospitalDetails(update);
+        this.setCurrentAccountDetails();
+      } else {
+        console.log("Could not updated hospital details");
+      }
     },
+    setCurrentAccountDetails() {
+      this.newUsername = this.hospitalAccountDetails.username;
+      this.newEmail = this.hospitalAccountDetails.email;
+      this.newLocation = this.hospitalAccountDetails.location;
+    },
+  },
+  mounted() {
+    this.setCurrentAccountDetails();
   },
 };
 </script>

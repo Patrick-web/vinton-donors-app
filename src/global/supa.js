@@ -179,6 +179,35 @@ export async function getDonorDetails(email) {
 	}
 }
 
+export async function updateDonorDetails(updatedDetails, donorEmail) {
+	const { data, error } = await supabase
+		.from("users")
+		.update(updatedDetails)
+		.eq("email", donorEmail);
+	if (donorEmail) {
+		const { user, err } = await supabase.auth.update({
+			email: donorEmail,
+		});
+		if (!error && !err) {
+			console.log("Account Updated");
+			console.log(data[0]);
+			return data[0];
+		} else {
+			console.log(error);
+			return false;
+		}
+	} else {
+		if (!error) {
+			console.log("Account Updated");
+			console.log(data[0]);
+			return data[0];
+		} else {
+			console.log(error);
+			return false;
+		}
+	}
+}
+
 export async function getDonorDonations(donorEmail) {
 	let { data: hospitals, error } = await supabase.from("hospitals").select("*");
 	if (!error) {
@@ -259,6 +288,19 @@ export async function getDonationRequestsRelevantToUser(bloodType) {
 		return null;
 	}
 }
+export async function acceptDonationRequest(requestID, donorEmail) {
+	const { data, error } = await supabase
+		.from("donation_requests")
+		.update({ answered: true, accept_donor: donorEmail })
+		.eq("id", requestID);
+	if (!error) {
+		console.log(data[0]);
+		return data[0];
+	} else {
+		console.log(error);
+		return false
+	}
+}
 
 export async function getHospitalDetails(email) {
 	let { data: hospital, error } = await supabase
@@ -307,20 +349,45 @@ export async function hospital_addBloodDonation(donations, hospitalEmail) {
 	}
 }
 
-export async function updateHospitalDetails(updatedDetails, targetHospital) {
+export async function updateHospitalDetails(updatedDetails, hospitalEmail) {
 	const { data, error } = await supabase
 		.from("hospitals")
 		.update(updatedDetails)
-		.eq("username", targetHospital);
-	if (targetHospital.email) {
+		.eq("email", hospitalEmail);
+	if (hospitalEmail) {
 		const { user, err } = await supabase.auth.update({
-			email: targetHospital.email,
+			email: hospitalEmail,
 		});
+		if (!error && !err) {
+			console.log("Account Updated");
+			console.log(data[0]);
+			return data[0];
+		} else {
+			console.log(error);
+			return false;
+		}
+	} else {
+		if (!error) {
+			console.log("Account Updated");
+			console.log(data[0]);
+			return data[0];
+		} else {
+			console.log(error);
+			return false;
+		}
 	}
-	if (!error && !err) {
-		console.log("Account Updated");
-		console.log(data);
-		return data;
+}
+
+export async function updateBloodBank(updatedBloodBank, hospitalEmail) {
+	const { data, error } = await supabase
+		.from("hospitals")
+		.update({ bloodDatabase: updatedBloodBank })
+		.eq("email", hospitalEmail);
+
+	if (!error) {
+		console.log("Blood Bank Updated");
+		console.log(data[0]);
+		return data[0];
 	} else {
 		console.log(error);
 		return false;

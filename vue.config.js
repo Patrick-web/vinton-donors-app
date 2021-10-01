@@ -1,4 +1,7 @@
 module.exports = {
+  devServer: {
+    disableHostCheck: true
+  },
   transpileDependencies: [
     'vuetify'
   ],
@@ -9,3 +12,4 @@ module.exports = {
     cordovaPath: 'src-cordova'
   }
 }
+

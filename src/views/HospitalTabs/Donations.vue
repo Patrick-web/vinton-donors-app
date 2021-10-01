@@ -4,7 +4,7 @@
       <div class="abs_center_xy z3 width_full">
         <div class="abs_center_xy z3 width_full">
           <h2 class="tsz2_2 ta_center">{{ hospitalDonations.length }}</h2>
-          <h3 class="ta_center tsz_2">Donations Completed</h3>
+          <h3 class="ta_center tsz_2">Donations Received</h3>
         </div>
       </div>
     </div>

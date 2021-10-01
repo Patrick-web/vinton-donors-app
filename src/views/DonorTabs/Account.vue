@@ -13,25 +13,19 @@
       </v-card-text>
       <form class="form_page_form ma10 pa10">
         <v-text-field
-          v-model="username"
+          v-model="newUsername"
           :counter="10"
           label="Username"
           required
         ></v-text-field>
+        <v-text-field v-model="newEmail" label="Email" required></v-text-field>
         <v-text-field
-          v-model="password"
-          label="Password"
-          type="password"
-          required
-        ></v-text-field>
-        <v-text-field v-model="email" label="Email" required></v-text-field>
-        <v-text-field
-          v-model="location"
+          v-model="newLocation"
           label="Location"
           required
         ></v-text-field>
         <v-select
-          v-model="bloodType"
+          v-model="newBloodType"
           :items="bloodTypes"
           item-text="Blood Type"
           item-value="abr"
@@ -47,18 +41,55 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
+import { updateDonorDetails } from "@/global/supa.js";
 export default {
   data: () => ({
-    username: "",
-    password: "",
-    email: "",
-    location: "",
-    bloodType: "",
+    newUsername: "",
+    newEmail: "",
+    newLocation: "",
+    newBloodType: "",
     bloodTypes: ["A+", "A-", "B+", "B-", "0+", "0-", "AB+", "AB-"],
   }),
   computed: {
     ...mapState(["donorDetails"]),
+  },
+  methods: {
+    ...mapMutations(["setDonorDetails"]),
+    async submit() {
+      const updatedDetails = {};
+      if (this.newUsername) {
+        updatedDetails["username"] = this.newUsername;
+      }
+      if (this.newLocation) {
+        updatedDetails["location"] = this.newLocation;
+      }
+      if (this.newEmail) {
+        updatedDetails["email"] = this.newEmail;
+      }
+      if (this.newBloodType) {
+        updatedDetails["bloodType"] = this.newBloodType;
+      }
+      const update = await updateDonorDetails(
+        updatedDetails,
+        this.donorDetails.email
+      );
+      if (update) {
+        this.setDonorDetails(update);
+        this.setCurrentAccountDetails();
+      } else {
+        console.log("Could not updated donor details");
+      }
+    },
+    setCurrentAccountDetails() {
+      this.newUsername = this.donorDetails.username;
+      this.newEmail = this.donorDetails.email;
+      this.newLocation = this.donorDetails.location;
+      this.newBloodType = this.donorDetails.bloodType;
+    },
+  },
+  mounted() {
+    this.setCurrentAccountDetails();
   },
 };
 </script>
