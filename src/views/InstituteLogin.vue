@@ -15,21 +15,20 @@
         <path d="M0 0H414V197.761L0 293V0Z" fill="#E6006E" />
       </svg>
     </div>
-    <form class="form_page_form ma10 pa20 round20">
-      <v-text-field
-        v-model="username"
-        :counter="10"
-        label="Username"
-        required
-      ></v-text-field>
-      <v-text-field v-model="password" label="Password" required></v-text-field>
+    <v-form class="form_page_form ma10 round20">
+      <v-card class="pa10 round20">
+        <v-text-field v-model="email" label="Email" required></v-text-field>
+        <v-text-field
+          v-model="password"
+          label="Password"
+          required
+        ></v-text-field>
 
-      <router-link to="/institute_home">
         <v-btn class="mr-4" rounded block color="#E5006E" @click="submit">
           submit
         </v-btn>
-      </router-link>
-    </form>
+      </v-card>
+    </v-form>
     <div class="form_page_footer pos_abs bottom0 left0 pa10">
       <router-link to="/institute_signup"> Sign Up Instead </router-link>
     </div>
@@ -37,15 +36,29 @@
 </template>
 
 <script>
+import { loginUser } from "@/global/supa.js";
+import { mapMutations } from "vuex";
+
 export default {
   data: () => ({
-    username: "",
+    email: "",
     password: "",
   }),
 
   methods: {
-    submit() {
-      this.$v.$touch();
+    ...mapMutations(["setHospitalDetails"]),
+    async submit() {
+      const credentials = {
+        email: this.email,
+        password: this.password,
+      };
+      const user = await loginUser(credentials, "hospitals");
+      if (user) {
+        this.setHospitalDetails(user);
+        this.$router.push("/institute_home");
+      } else {
+        alert("Wrong Credentials");
+      }
     },
     clear() {
       this.$v.$reset();

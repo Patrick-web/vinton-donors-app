@@ -2,37 +2,42 @@
   <div class="tab">
     <div class="tab_header">
       <div class="abs_center_xy z3 width_full">
-        <h3 class="ta_center tsz_2">5 Pending Requests</h3>
-        <h3 class="ta_center tsz_2">2 Requests Accepted</h3>
+        <h3 class="ta_center tsz_2">
+          {{ bloodRequests.pending.length }} Pending Requests
+        </h3>
+        <h3 class="ta_center tsz_2">
+          {{ bloodRequests.answered.length }} Requests Accepted
+        </h3>
       </div>
 
       <img class="pos_abs width_full" src="@/assets/images/split.svg" alt="" />
     </div>
     <v-card class="pa10 mb10">
       <h3>Accepted Requests</h3>
-      <v-card class="mx-auto" max-width="344">
-        <v-card-text v-for="accept in accepted" :key="accept.type">
-          <p class="text--primary">{{ accept.type }} request, accepted by</p>
+      <div>
+        <v-card-text
+          v-for="request in bloodRequests.answered"
+          :key="request.id"
+        >
+          <h4 class="text--primary">{{ request.bloodType }}</h4>
+          <p>Request</p>
           <div class="text--primary">
-            {{ accept.donorName }}
-          </div>
-          <div class="text--primary">
-            {{ accept.donorEmail }}
+            Answered by {{ request.accept_donor }}
           </div>
         </v-card-text>
         <v-card-actions> </v-card-actions>
-      </v-card>
+      </div>
     </v-card>
     <v-card class="pa10">
       <h3>Pending Requests</h3>
-      <v-card class="mx-auto mb10" max-width="344">
-        <v-card-text v-for="pend in pending" :key="pend.type">
-          <p class="text--primary">{{ pend.type }}</p>
+      <div class="mx-auto mb10">
+        <v-card-text v-for="request in bloodRequests.pending" :key="request.id">
+          <p class="text--primary">{{ request.bloodType }}</p>
           <div class="text--primary">
-            {{ pend.description }}
+            {{ request.description }}
           </div>
         </v-card-text>
-      </v-card>
+      </div>
     </v-card>
     <v-dialog v-model="showForm" width="500">
       <v-card>
@@ -81,6 +86,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapState } from "vuex";
+import { newDonationRequest, getDonationRequests } from "@/global/supa.js";
 export default {
   data() {
     return {
@@ -88,32 +95,44 @@ export default {
       bloodType: "",
       bloodTypes: ["A+", "A-", "B+", "B-", "0+", "0-", "AB+", "AB-"],
       description: "",
-      accepted: [
-        {
-          type: "0+",
-          donorName: "James Kimani",
-          donorEmail: "jamesk@gmail.com",
-        },
-      ],
-      pending: [
-        {
-          type: "B+ Request",
-          description:
-            "This request comes from Jane Kimani. A student at JKUAT university who got involved in accident while crossing the East road bypass. Great efforts have been made for her and she would greatly appreciate any help.",
-        },
-      ],
     };
   },
+  computed: {
+    ...mapGetters(["bloodRequests"]),
+    ...mapState(["hospitalDetails"]),
+  },
   methods: {
-    addRequest() {
-      const pending = {
-        type: `${this.bloodType} Request`,
+    ...mapMutations(["addBloodRequest", "setDonationRequest"]),
+    async addRequest() {
+      const newRequest = {
+        hospital: this.hospitalDetails.username,
+        bloodType: this.bloodType,
         description: this.description,
       };
-      this.pending.unshift(pending);
+      const result = await newDonationRequest(newRequest);
+      if (result) {
+        console.log(result[0]);
+        this.addBloodRequest(result[0]);
+      } else {
+        console.log("Error");
+      }
       this.showForm = false;
-      (this.bloodType = ""), (this.description = "");
     },
+    async getAllRequests() {
+      const donations = await getDonationRequests({
+        column: "hospital",
+        value: this.hospitalDetails.username,
+      });
+      if (donations) {
+        this.setDonationRequest(donations);
+        console.log(donations);
+      } else {
+        console.log("Error while getting donations");
+      }
+    },
+  },
+  mounted() {
+    this.getAllRequests();
   },
 };
 </script>

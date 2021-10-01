@@ -3,7 +3,7 @@
   <div class="page donor_home pos_rel">
     <v-tabs-items v-model="tab">
       <v-tab-item value="tab-1">
-        <donations v-on:totalDonation="(d) => (this.donationCount = d)" />
+        <donations />
       </v-tab-item>
       <v-tab-item value="tab-2">
         <requests />
@@ -42,14 +42,22 @@
 import Donations from "./DonorTabs/Donations.vue";
 import Requests from "./DonorTabs/Requests.vue";
 import Account from "./DonorTabs/Account.vue";
+import { mapGetters } from "vuex";
+
 export default {
   components: { Donations, Requests, Account },
+  computed: {
+    ...mapGetters(["totalDonations"]),
+  },
   data() {
     return {
       tab: null,
-      donationCount: 0,
     };
   },
+  methods: {
+    ...mapGetters([""]),
+  },
+  mounted() {},
 };
 </script>
 

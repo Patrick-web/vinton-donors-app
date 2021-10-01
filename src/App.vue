@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <div class="full" @click="goFullScreen"></div>
+    <!-- <div class="full" @click="goFullScreen"></div> -->
     <v-main class="pos-rel">
       <v-btn
         @click="goBack"
@@ -82,5 +82,9 @@ body {
   top: 0;
   left: 0;
   overflow: hidden;
+}
+.v-slide-group__prev {
+  display: none !important;
+  width: 0 !important;
 }
 </style>

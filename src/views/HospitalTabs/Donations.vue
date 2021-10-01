@@ -3,7 +3,7 @@
     <div class="tab_header">
       <div class="abs_center_xy z3 width_full">
         <div class="abs_center_xy z3 width_full">
-          <h2 class="tsz2_2 ta_center">{{ donations.length }}</h2>
+          <h2 class="tsz2_2 ta_center">{{ hospitalDonations.length }}</h2>
           <h3 class="ta_center tsz_2">Donations Completed</h3>
         </div>
       </div>
@@ -16,7 +16,7 @@
     <v-data-table
       dense
       :headers="headers"
-      :items="donations"
+      :items="hospitalDonations"
       item-key="name"
       class="elevation-1 pos_rel z3"
     ></v-data-table>
@@ -32,7 +32,11 @@
             label="Blood Type"
             required
           ></v-select>
-          <v-text-field v-model="donor" label="Donor" required></v-text-field>
+          <v-text-field
+            v-model="donor"
+            label="Donor Email"
+            required
+          ></v-text-field>
           <v-text-field
             v-model="recipient"
             label="Recipient"
@@ -68,6 +72,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapState } from "vuex";
+import { hospital_addBloodDonation } from "@/global/supa.js";
 export default {
   data() {
     return {
@@ -90,49 +96,53 @@ export default {
           value: "donor",
         },
         {
-          text: "Date",
-          align: "start",
-          sortable: false,
-          value: "date",
-        },
-        {
           text: "Recipient",
           align: "start",
           sortable: false,
           value: "recipient",
         },
-      ],
-      donations: [
         {
-          type: "AB+",
-          donor: "Lizzy Atieno",
-          date: "June 12 2020",
-          recipient: "Eliud Kipkoech",
-        },
-        {
-          type: "O+",
-          donor: "Kimmy Wanga",
-          date: "June 20 2020",
-          recipient: "Vily Maenga",
-        },
-        {
-          type: "A-",
-          donor: "Pul Brian",
-          date: "June 30 2020",
-          recipient: "Brian Mageto",
+          text: "Date",
+          align: "start",
+          sortable: false,
+          value: "date",
         },
       ],
     };
   },
+  computed: {
+    ...mapState(["hospitalDetails"]),
+    ...mapGetters(["hospitalDonations"]),
+  },
   methods: {
-    addDonation() {
+    ...mapMutations(["setHospitalDonations"]),
+    async addDonation() {
       const newDonation = {
         type: this.bloodType,
         donor: this.donor,
         recipient: this.recipient,
-        date: Date(),
+        date: new Date().toLocaleString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        hospital: this.hospitalDetails.username,
+        location: this.hospitalDetails.location,
       };
-      this.donations.unshift(newDonation);
+      const currentDonations = this.hospitalDetails.donationsCompleted;
+      currentDonations.unshift(newDonation);
+      const updatedDonations = await hospital_addBloodDonation(
+        currentDonations,
+        this.hospitalDetails.email
+      );
+      if (updatedDonations) {
+        console.log("Setting this/");
+        console.log(updatedDonations);
+        this.setHospitalDonations(updatedDonations);
+      } else {
+        console.log("Error updating  donations");
+      }
       this.showForm = false;
     },
   },

@@ -15,34 +15,45 @@
         <path d="M0 0H414V197.761L0 293V0Z" fill="#E6006E" />
       </svg>
     </div>
-    <form class="form_page_form ma10 pa20 round20">
-      <v-text-field
-        v-model="username"
-        :counter="10"
-        label="Username"
-        required
-      ></v-text-field>
-      <v-text-field v-model="password" label="Password" required></v-text-field>
-      <v-text-field v-model="email" label="Email" required></v-text-field>
-      <v-text-field v-model="location" label="Location" required></v-text-field>
-      <v-select
-        v-model="bloodType"
-        :items="bloodTypes"
-        item-text="Blood Type"
-        item-value="abr"
-        label="Blood Type"
-        required
-      ></v-select>
-      <router-link to="/donor_home">
+    <v-form class="form_page_form ma10 round20">
+      <v-card class="pa10 round20">
+        <v-text-field
+          v-model="username"
+          :counter="10"
+          label="Username"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="password"
+          label="Password"
+          required
+        ></v-text-field>
+        <v-text-field v-model="email" label="Email" required></v-text-field>
+        <v-text-field
+          v-model="location"
+          label="Location"
+          required
+        ></v-text-field>
+        <v-select
+          v-model="bloodType"
+          :items="bloodTypes"
+          item-text="Blood Type"
+          item-value="abr"
+          label="Blood Type"
+          required
+        ></v-select>
         <v-btn class="mr-4 mt10" rounded block color="#E5006E" @click="submit">
           submit
         </v-btn>
-      </router-link>
-    </form>
+      </v-card>
+    </v-form>
   </div>
 </template>
 
 <script>
+import { registerDonor } from "@/global/supa.js";
+import { mapMutations } from "vuex";
+
 export default {
   data: () => ({
     username: "",
@@ -54,8 +65,20 @@ export default {
   }),
 
   methods: {
-    submit() {
-      this.$v.$touch();
+    ...mapMutations(["setDonorDetails"]),
+    async submit() {
+      const newDonor = {
+        username: this.username,
+        password: this.password,
+        email: this.email,
+        location: this.location,
+        bloodType: this.bloodType,
+      };
+      const user = await registerDonor(newDonor);
+      if (user) {
+        this.setDonorDetails(user[0]);
+        this.$router.push("/donor_home");
+      }
     },
     clear() {
       this.$v.$reset();

@@ -7,15 +7,18 @@
       </div>
       <img class="pos_abs width_full" src="@/assets/images/split.svg" alt="" />
     </div>
-    <v-card class="mx-auto" max-width="344">
+    <v-card
+      class="ma10"
+      v-for="request in donorRelevantRequests"
+      :key="request.id"
+    >
       <v-card-text>
-        <p class="text-h4 text--primary">B+ Requested at</p>
-        <p>Nyeri Level 5 Hospital</p>
+        <p class="text-h4 text--primary">
+          {{ request.bloodType }} Requested at
+        </p>
+        <p>{{ request.hospital }}</p>
         <div class="text--primary">
-          This request comes from Jane Kimani. A student at JKUAT university who
-          got involved in accident while crossing the East road bypass. Great
-          efforts have been made for her and she would greatly appreciate any
-          help.
+          {{ request.description }}
         </div>
       </v-card-text>
       <v-card-actions>
@@ -46,3 +49,30 @@
     </v-card>
   </div>
 </template>
+<script>
+import { getDonationRequestsRelevantToUser } from "@/global/supa.js";
+import { mapMutations, mapState } from "vuex";
+export default {
+  computed: {
+    ...mapState(["donorDetails", "donorRelevantRequests"]),
+  },
+  methods: {
+    ...mapMutations(["setDonorRelevantRequests"]),
+    async getRequests() {
+      const relevantRequests = await getDonationRequestsRelevantToUser(
+        this.donorDetails.bloodType
+      );
+      if (relevantRequests) {
+        console.log("Setting relevant requests");
+        console.log(relevantRequests);
+        this.setDonorRelevantRequests(relevantRequests);
+      } else {
+        console.log("Could Not get relevantRequests");
+      }
+    },
+  },
+  mounted() {
+    this.getRequests();
+  },
+};
+</script>

@@ -2,36 +2,43 @@
   <div class="Donor_Tab tab">
     <div class="tab_header">
       <div class="abs_center_xy z3 width_full">
-        <h3 class="ta_center tsz2_2">Blood Deficit</h3>
-        <div class="flex center-h center-v deficits">
-          <div
-            class="flex center-h center-v"
-            v-for="deficit in deficits"
-            :key="deficit.type"
-          >
-            <p class="mr5">{{ deficit.type }} 👉</p>
-
-            <p>{{ deficit.count }}</p>
-          </div>
+        <h3 class="ta_center tsz2_2">Blood Bank</h3>
+      </div>
+    </div>
+    <!-- <v-data-table
+      dense
+      :headers="headers"
+      :items="bloodDatabase"
+      item-key="name"
+      class="elevation-1 pos_rel z3 mt20"
+    ></v-data-table> -->
+    <div class="grid3">
+      <div
+        class="blood_card flex flex-col center-v round10"
+        v-for="blood in bloodDatabase"
+        :key="blood.bloodType"
+      >
+        <h4 class="mb10">{{ blood.bloodType }}</h4>
+        <div class="flex_between w-80">
+          <p>Available</p>
+          <p>{{ blood.balance }}</p>
+        </div>
+        <div class="flex_between w-80">
+          <p>Minimum</p>
+          <p>{{ blood.minimum }}</p>
         </div>
       </div>
     </div>
-    <img
+    <!-- <img
       class="pos_abs top0 width_full"
       src="@/assets/images/split.svg"
       alt=""
-    />
-    <v-data-table
-      dense
-      :headers="headers"
-      :items="db"
-      item-key="name"
-      class="elevation-1 pos_rel z3 mt20"
-    ></v-data-table>
+    /> -->
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -47,56 +54,6 @@ export default {
         {
           type: "AB+",
           count: 1,
-        },
-      ],
-      db: [
-        {
-          type: "A+",
-          balance: 15,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "A-",
-          balance: 5,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "B+",
-          balance: 15,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "B-",
-          balance: 15,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "AB+",
-          balance: 15,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "AB-",
-          balance: 15,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "0+",
-          balance: 15,
-          min: 5,
-          max: 20,
-        },
-        {
-          type: "0+",
-          balance: 15,
-          min: 5,
-          max: 20,
         },
       ],
       headers: [
@@ -118,27 +75,22 @@ export default {
           sortable: false,
           value: "min",
         },
-        {
-          text: "Maximum",
-          align: "start",
-          sortable: false,
-          value: "max",
-        },
       ],
     };
   },
   computed: {
-    totalDonations() {
-      return this.monthDonations
-        .map((md) => md.donations.length)
-        .reduce((acc, val) => acc + val, 0);
-    },
+    ...mapGetters(["bloodDatabase"]),
   },
-  mounted() {},
+  mounted() {
+    console.log("=============");
+  },
 };
 </script>
 
 <style lang="scss">
+.tab {
+  background: black;
+}
 .deficits {
   position: absolute;
 
@@ -147,6 +99,19 @@ export default {
     margin-left: 40px;
     // width: 100%;
     border-right: 2px solid white;
+  }
+}
+.blood_card {
+  color: white;
+  margin: 10px;
+  background: rgb(16, 16, 16);
+  overflow: hidden;
+  h4 {
+    color: crimson;
+    background: rgb(255, 199, 210);
+    width: 100%;
+    font-size: 3rem;
+    text-align: center;
   }
 }
 </style>

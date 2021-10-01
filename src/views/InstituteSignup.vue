@@ -15,26 +15,36 @@
         <path d="M0 0H414V197.761L0 293V0Z" fill="#E6006E" />
       </svg>
     </div>
-    <form class="form_page_form ma10 pa20 round20">
-      <v-text-field
-        v-model="username"
-        :counter="10"
-        label="Username"
-        required
-      ></v-text-field>
-      <v-text-field v-model="password" label="Password" required></v-text-field>
-      <v-text-field v-model="email" label="Email" required></v-text-field>
-      <v-text-field v-model="location" label="Location" required></v-text-field>
-      <router-link to="/institute_home">
+    <v-form class="form_page_form ma10 round20">
+      <v-card class="pa20 round20">
+        <v-text-field
+          v-model="username"
+          :counter="10"
+          label="Username"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="password"
+          label="Password"
+          required
+        ></v-text-field>
+        <v-text-field v-model="email" label="Email" required></v-text-field>
+        <v-text-field
+          v-model="location"
+          label="Location"
+          required
+        ></v-text-field>
         <v-btn class="mr-4 mt10" rounded block color="#E5006E" @click="submit">
           submit
         </v-btn>
-      </router-link>
-    </form>
+      </v-card>
+    </v-form>
   </div>
 </template>
 
 <script>
+import { registerHospital } from "@/global/supa.js";
+import { mapMutations } from "vuex";
 export default {
   data: () => ({
     username: "",
@@ -44,8 +54,19 @@ export default {
   }),
 
   methods: {
-    submit() {
-      this.$v.$touch();
+    ...mapMutations(["setHospitalDetails"]),
+    async submit() {
+      const newHospital = {
+        username: this.username,
+        password: this.password,
+        email: this.email,
+        location: this.location,
+      };
+      const hospital = await registerHospital(newHospital);
+      if (hospital) {
+        this.setHospitalDetails(hospital[0]);
+        this.$router.push("/institute_home");
+      }
     },
     clear() {
       this.$v.$reset();

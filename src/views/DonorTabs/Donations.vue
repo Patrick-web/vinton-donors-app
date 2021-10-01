@@ -2,7 +2,10 @@
   <div class="Donor_Tab tab">
     <div class="tab_header">
       <div class="abs_center_xy z3 width_full">
-        <h2 class="tsz2_2 ta_center">{{ totalDonations }}</h2>
+        <h2 class="tsz2_2 ta_center">
+          <!-- {{ donorDonations.map((group) => group.donations).length }} -->
+          {{ donorDonations[0].donations.length }}
+        </h2>
         <h3 class="ta_center tsz_2">Donations so far</h3>
       </div>
     </div>
@@ -13,7 +16,7 @@
     />
     <v-card
       flat
-      v-for="monthDonation in monthDonations"
+      v-for="monthDonation in donorDonations"
       :key="monthDonation.month"
       class="ma10"
     >
@@ -48,61 +51,70 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from "vuex";
+import { getDonorDonations } from "@/global/supa.js";
 export default {
   data() {
     return {
-      monthDonations: [
-        {
-          month: "June",
-          donations: [
-            {
-              date: "10 June 2020",
-              hospital: "Kenyatta National Hospital",
-              location: "Dedan Kimathi University",
-            },
-          ],
-        },
-        {
-          month: "July",
-          donations: [
-            {
-              date: "2 June 2020",
-              hospital: "Kenyatta National Hospital",
-              location: "Dedan Kimathi University",
-            },
-            {
-              date: "25 June 2020",
-              hospital: "Murang'a level 5 Hospital",
-              location: "Muranga Township Hall",
-            },
-          ],
-        },
-        {
-          month: "August",
-          donations: [
-            {
-              date: "15 August 2020",
-              hospital: "Kenyatta National Hospital",
-              location: "Dedan Kimathi University",
-            },
-            {
-              date: "30 August 2020",
-              hospital: "Murang'a level 5 Hospital",
-              location: "Muranga Township Hall",
-            },
-          ],
-        },
-      ],
+      // monthDonations: [
+      //   {
+      //     month: "June",
+      //     donations: [
+      //       {
+      //         date: "10 June 2020",
+      //         hospital: "Kenyatta National Hospital",
+      //         location: "Dedan Kimathi University",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     month: "July",
+      //     donations: [
+      //       {
+      //         date: "2 June 2020",
+      //         hospital: "Kenyatta National Hospital",
+      //         location: "Dedan Kimathi University",
+      //       },
+      //       {
+      //         date: "25 June 2020",
+      //         hospital: "Murang'a level 5 Hospital",
+      //         location: "Muranga Township Hall",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     month: "August",
+      //     donations: [
+      //       {
+      //         date: "15 August 2020",
+      //         hospital: "Kenyatta National Hospital",
+      //         location: "Dedan Kimathi University",
+      //       },
+      //       {
+      //         date: "30 August 2020",
+      //         hospital: "Murang'a level 5 Hospital",
+      //         location: "Muranga Township Hall",
+      //       },
+      //     ],
+      //   },
+      // ],
     };
   },
-  computed: {
-    totalDonations() {
-      return this.monthDonations
-        .map((md) => md.donations.length)
-        .reduce((acc, val) => acc + val, 0);
+  methods: {
+    ...mapMutations(["setDonorDonations"]),
+    async setDonations() {
+      const groupedDonations = await getDonorDonations(this.donorDetails.email);
+      console.log("Setting donations...");
+      console.log(groupedDonations);
+      this.setDonorDonations(groupedDonations);
     },
   },
-  mounted() {},
+  computed: {
+    ...mapState(["donorDetails", "donorDonations"]),
+  },
+  mounted() {
+    this.setDonations();
+  },
 };
 </script>
 

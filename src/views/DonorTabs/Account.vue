@@ -3,7 +3,7 @@
     <div class="tab_header">
       <div class="abs_center_xy z3 width_full">
         <h2 class="tsz2_2 ta_center">Good Morning</h2>
-        <h3 class="ta_center tsz1">Vinton</h3>
+        <h3 class="ta_center tsz1">{{ donorDetails.username }}</h3>
       </div>
       <img class="pos_abs width_full" src="@/assets/images/split.svg" alt="" />
     </div>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data: () => ({
     username: "",
@@ -56,6 +57,9 @@ export default {
     bloodType: "",
     bloodTypes: ["A+", "A-", "B+", "B-", "0+", "0-", "AB+", "AB-"],
   }),
+  computed: {
+    ...mapState(["donorDetails"]),
+  },
 };
 </script>
 
