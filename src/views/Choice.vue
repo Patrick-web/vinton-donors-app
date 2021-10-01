@@ -1,8 +1,8 @@
 <template>
   <div class="choice page">
-    <router-link to="/donor_login">
-      <div>
-        <h2 class="abs_center_xy">Donor</h2>
+    <div>
+      <h2 class="abs_center_xy">Donor</h2>
+      <router-link to="/donor_login">
         <svg
           width="414"
           height="523"
@@ -13,11 +13,11 @@
         >
           <path d="M0 0H414V353L0 523V0Z" fill="#E6006E" />
         </svg>
-      </div>
-    </router-link>
-    <router-link to="/institute_login">
-      <div>
-        <h2 class="abs_center_xy">Hospital</h2>
+      </router-link>
+    </div>
+    <div>
+      <h2 class="abs_center_xy">Hospital</h2>
+      <router-link to="/institute_login">
         <svg
           width="414"
           height="523"
@@ -28,8 +28,8 @@
         >
           <path d="M414 523H0L0 170L414 0L414 523Z" fill="#F71558" />
         </svg>
-      </div>
-    </router-link>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -46,6 +46,7 @@ export default {};
       z-index: 2;
       font-size: 3rem;
       color: white;
+      pointer-events: none;
     }
     .sv_t {
       position: absolute;
@@ -54,6 +55,9 @@ export default {};
     .sv_b {
       position: absolute;
       transform: translateY(-18%);
+    }
+    svg:hover {
+      filter: brightness(0.7);
     }
   }
 }

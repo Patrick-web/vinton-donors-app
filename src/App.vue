@@ -10,6 +10,7 @@
         small
         color="transparent"
         depressed
+        v-if="$route.path !== '/'"
       >
         <v-icon dark> mdi-arrow-left </v-icon>
       </v-btn>
